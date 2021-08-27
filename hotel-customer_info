@@ -1,0 +1,30 @@
+#include<iostream>
+
+struct Date{
+    int dd;
+    int mm;
+    int yy;
+};
+
+struct Address{
+    char street[50];
+    char city[50];
+    char zipCode[5];
+    char country[50];
+    char email_address[30];
+    char phone_number[10];
+};
+
+struct Hotel_info{
+    Address hotel_address;
+    float hotel_rating;
+};
+
+struct Customer{
+    char first_name[50];
+    char last_name[50];
+    char gender[4];
+    char customer_id[25];
+    Date DoB;
+    Address customer_address;
+};
