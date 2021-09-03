@@ -1,5 +1,65 @@
 #include<iostream>
+#include<conio.h>
+#include<stdlib.h>
+
 using namespace std;
+int password = 1234;
+
+struct Room{
+    int room_number;
+    string room_type;
+    int number_of_bed;
+    float price;
+} ob[50];
+
+Room full(Room r[50]){
+    for(int i=0; i<10; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Ordinary Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 200;
+    }
+    for(int i=10; i<20; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Luxuary Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 400;
+    }
+    for(int i=20; i<25; i++){
+        r[i].room_number=i+1;
+        r[i].room_type = "Royal Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 800;
+    }
+    for(int i=25; i<35; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Ordinary Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 500;
+    }
+    for(int i=35; i<45; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Luxuary Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 800;
+    }
+    for(int i=45; i<50; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Royal Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 1400;
+    }
+}
+
+void test(){
+    for(int i=0; i<50; i++){
+        cout<<"Room number: "<<ob[i].room_number<<endl;
+        cout<<"Room Type: "<<ob[i].room_type<<endl;
+        cout<<"Number of bed: "<<ob[i].number_of_bed<<endl;
+        cout<<"Price: "<<ob[i].price<<endl;
+        cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+    }
+}
 
 struct order{
     order() : status(true) {};
@@ -8,7 +68,13 @@ struct order{
     char address[20];
     char phone[10];
     bool status;    
+    
 } room[50];
+
+
+bool loginVerification(){
+
+}
 
 order add(order x[]){
 int r;
@@ -95,8 +161,8 @@ void edit(){
     cout<<"Address: "<<room[room_num-1].address<<endl;
     cout<<"Phone number: "<<room[room_num-1].phone<<endl;
 }
-
-int main(){
+void admin_ui(){
+    system("cls");    
     int choose;
     bool cont = true;
 
@@ -133,4 +199,65 @@ int main(){
     }
     
 };
+}
+void user(){
+    system("cls");    
+    int choose;
+    bool cont = true;
+
+    for(int i=0; i<50; i++){
+        room[i].room_no = i+1;
+    }
+
+    while (cont)
+    {
+
+    cout<<"\t\t\tWelcome!!";
+    cout<<"\n\t\t\tPress :";
+    cout<<"\n\t\t\t\t1: Reserve room";
+    cout<<"\n\t\t\t\t2: Look available room";
+    cout<<"\n\t\t\t\t3: Edit Record: ";
+    cin>>choose;
+    switch (choose)
+    {
+    case 1:
+        add(room);
+        break;
+    case 2:
+        rooms();
+        break;
+    case 3:
+        edit();
+        break;
+    default:
+        cout<<"Wrong!!";
+        break;
+    }
+    
+};
+}
+void choose(){
+    int c;
+    cout<<"\t\t\t\tEnter the account type: \n";
+    cout<<"\t\t\t\t\t1. Admin\n";
+    cout<<"\t\t\t\t\t2. User\n";
+    cin>>c;
+    if(c==1){
+        system("cls");
+        system("color 02");
+        int pass;
+        cout<<"Enter your Password: ";
+        cin>>pass;
+        if(pass == password){
+        admin_ui();
+        }
+    }
+    else if(c==2){
+        user();
+    }
+}
+int main(){
+    full(ob);
+    test();
+    choose();
 }
