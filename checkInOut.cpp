@@ -9,6 +9,8 @@ tm *ltm = localtime(&now);
 
 int roomNo;
 
+
+//this order structure is from the reservation.cpp file
 struct order{
     order() : status(true) {};
     char name[20];
