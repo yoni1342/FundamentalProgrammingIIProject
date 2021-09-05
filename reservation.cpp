@@ -134,3 +134,124 @@ int main(){
     
 };
 }
+
+
+/*should include this functions*/
+/*void Admin(Rooms i[],customer j[]){
+    system("cls");
+    char PWcheck[20];
+    char UNcheck[20];
+    system("cls");
+    int choice;
+    cout<<"\n***********LOGIN***********\n"<<endl;
+    cout<<"\tEnter Username: ";
+    cin.ignore();
+    cin.getline(UNcheck,'\n');
+    cout<<"\tEnter Password: ";
+    cin.getline(PWcheck,'\n');
+
+    bool admincheck=adminLogin(PWcheck,UNcheck);
+
+    if(admincheck){
+        cout<<"\n\t**********WELCOME ADMIN**********\n";
+
+
+    }
+    else{
+
+        if(counter==3){
+            cout<<"\n\tToo many Error!";
+            system("\n\tpause");
+            main();
+        }
+        else{
+        counter++;
+        cout<<"\tInvalid Input. Try Again.\n";
+        system("pause");
+        Admin(i,j);}
+    }
+
+
+}
+
+void User(Rooms x[],customer y[]){
+    system("cls");
+    int *choice=new int;
+    cout<<"\n***********WELCOME USER***********";
+    cout<<"\nPRESS:"<<endl;
+    cout<<"\t1.Booking a Room."<<endl;
+    cout<<"\t2.Inquiry on Available Rooms."<<endl;
+    cout<<"\t3.Canceling a Reservation."<<endl;
+    cout<<"\t4.Inquiry about the hotel."<<endl;
+    cout<<"\t5.Back To Main Menu"<<endl;
+    cout<<"\t6.Exit"<<endl;
+    *choice=INT_validation();
+
+    /**********Switch statement************/
+  /*  switch(*choice){
+    case 1:
+        Booking(x,y);
+        break;
+    case 2:
+        //AvailableRooms();
+        break;
+    case 3:
+        //cancelation();
+        break;
+    case 4:
+        //HotelInfo();
+        break;
+    case 5:
+
+        main();
+        break;
+    case 6:
+        exit(1);
+    }
+}
+
+int main(){
+
+    int *n=new int(50);
+    customer *custInfo=new customer[*n];
+    Rooms *roomPtr=new Rooms[*n];
+
+    for(int i=0;i<*n;i++){
+        roomPtr[i].room_status=0;
+        if(i<10)
+            strcpy(roomPtr[i].roomType,"Presidential");
+        else if(i<30)
+            strcpy(roomPtr[i].roomType,"Ordinary Single");
+        else
+            strcpy(roomPtr[i].roomType,"Ordinary TwinBed");
+        if(i<30)
+            roomPtr[i].No_of_beds=1;
+        else
+            roomPtr[i].No_of_beds=2;
+    }
+
+    system("cls");
+    //system("color 82");
+
+
+    int *choice=new int;
+    cout<<"Welcome.....\n";
+    cout<<"Press:\n";
+    cout<<"\t1.Admin\n";
+    cout<<"\t2.User\n";
+    cout<<"\t3.Exit\n"<<"\t\tEnter your choice: ";
+    *choice=INT_validation();
+
+    switch(*choice){
+    case 1:
+        Admin(roomPtr,custInfo);
+        break;
+    case 2:
+        User(roomPtr,custInfo);
+        break;
+    case 3:
+        exit(1);
+    }
+
+    return 0;
+}*/
