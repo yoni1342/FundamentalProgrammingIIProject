@@ -1,0 +1,75 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+struct Room{
+    int room_number;
+    string room_type;
+    int number_of_bed;
+    float price;
+} ob[50];
+
+void full(Room r[50]){
+    for(int i=0; i<10; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Ordinary Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 200;
+    }
+    for(int i=10; i<20; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Luxuary Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 400;
+    }
+    for(int i=20; i<25; i++){
+        r[i].room_number=i+1;
+        r[i].room_type = "Royal Room";
+        r[i].number_of_bed = 1;
+        r[i].price = 800;
+    }
+    for(int i=25; i<35; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Ordinary Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 500;
+    }
+    for(int i=35; i<45; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Luxuary Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 800;
+    }
+    for(int i=45; i<50; i++){
+        r[i].room_number = i+1;
+        r[i].room_type = "Royal Room";
+        r[i].number_of_bed = 2;
+        r[i].price = 1400;
+    }
+}
+
+
+void invoice(int room_num, int stay_duration)
+{
+    cout<<"Description"<<setw(15)<<"Rate"<<setw(15)<<"Quantity"<<setw(15)<<"Line total"<<endl;
+    cout<<"---------------------------------------------------------"<<endl;
+    cout<<ob[room_num].room_type<<setw(10)<<"$"<<ob[room_num].price<<setw(11)<<quantity<<setw(15)<<(float)stay_duration*(ob[room_num].price)<<setw(15)<<endl;
+    cout<<"----------------------------------------------------------"<<endl<<endl<<endl;
+
+    float subtotal, tax, tax_rate=0.15;
+    subtotal=(float)stay_duration*(ob[room_num].price);
+    tax=subtotal*tax_rate;
+
+    cout<<setw(45)<<"Subtotal\t$"<<subtotal<<endl;
+    cout<<setw(45)<<"Tax\t$"<<tax<<endl;
+    cout<<setw(44)<<"--------------------------"<<endl;
+    cout<<setw(45)<<"Total\t$"<<subtotal+tax<<endl;
+    cout<<setw(44)<<"--------------------------"<<endl;
+
+}
+
+int main()
+{
+    full(ob);//fill
+    invoice(6,3);//test
+}
