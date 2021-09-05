@@ -12,7 +12,7 @@ struct Room{
     float price;
 } ob[50];
 
-Room full(Room r[50]){
+void full(Room r[50]){
     for(int i=0; i<10; i++){
         r[i].room_number = i+1;
         r[i].room_type = "Ordinary Room";
