@@ -27,7 +27,7 @@ struct hotel_info
 
 void displayHotelInfo(hotel_info info){
     cout<<"**********************************"<<endl;
-    cout<<"About the hotel: \n";
+    cout<<"*\t\t\tAbout the hotel: \t\t\t*\n";
     cout<<"********************************** \n\n"<<endl;
     cout<<"\tOrganization: "<<info.name;
     cout<<"\n\tAddress: ";
@@ -56,38 +56,47 @@ void changeHotelAddress(hotel_info info){
         switch (y)
         {
         case 1:
-            {
+            {   cout<<"*********************************"endl;
                 cout<<"enter the new country address"<<endl;
+                cout<<"*********************************"endl;
                 cin>>info.hotel_address.country;
-                cout<<"country address has changed successfully";
+                cout<<"country address of the hotel has changed successfully";
             }
             break;
         case 2:
             {
+                cout<<"*********************************"endl;
                 cout<<"enter the new city address"<<endl;
+                cout<<"*********************************"endl;
                 cin>>info.hotel_address.country;
-                cout<<"city address has changed successfully";
+                cout<<"city address of the hotel has changed successfully";
             }
             break;
         case 3:
             {
+                cout<<"*********************************"endl;
                 cout<<"enter the new zip code "<<endl;
+                cout<<"*********************************"endl;
                 cin>>info.hotel_address.zipCode;
                 cout<<"zip code has changed successfully";
             }
             break;
         case 4:
             {
+                cout<<"*********************************"endl;
                 cout<<"enter the new email address "<<endl;
+                cout<<"*********************************"endl;
                 cin>>info.hotel_address.email;
-                cout<<"email address has changed successfully";
+                cout<<"hotel email address has changed successfully";
             }
             break;
         case 5:
             {
+                cout<<"*********************************"endl;
                 cout<<"enter the new phone number "<<endl;
+                cout<<"*********************************"endl;
                 cin>>info.hotel_address.zipCode;
-                cout<<"phone number has changed successfully";
+                cout<<"hotel phone number has changed successfully";
             }
             break;
             
@@ -99,7 +108,7 @@ void change_hotel_rating(hotel_info info){
     
     cout<<"Enter the new rating "<<endl;
     cin>>info.rating;
-    cout<<"rating has changed successfully";
+    cout<<"hotel rating has changed successfully";
 
 }
 int main(){
@@ -120,7 +129,7 @@ hotel_info info ={
 displayHotelInfo(info);
 
 cout<<"*******************************"<<endl;
-cout<<"Change the hotel info"<<endl;
+cout<<"*\t\t\tChange the hotel info\t\t*"<<endl;
 cout<<"*******************************"<<endl;
 cout<<"To change hotel name enter :1"<<endl;
 cout<<"To change hotel address enter :2"<<endl;
