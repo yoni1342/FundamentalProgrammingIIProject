@@ -1,16 +1,17 @@
-#include<iostream>
+ #include<iostream>
 #include<conio.h>
 #include<ctime>
 #include<cstring>
 #include<iomanip>
 #include<stdlib.h>
 #include<windows.h>
+#include<fstream>
 using namespace std;
 
 /******SOME GLOBAL VARIABLES************/
-int counter=1000;
+int counter=0,pin;
 float price1L=400, price2L=800,price1R=800, price2R=1400, price1O=200, price2O=500;
-
+string userName;
 /*******Structures*************/
 
 //Date Structure
@@ -100,20 +101,79 @@ float FLOAT_validation(){
     return input;
 }
 
+void readFile(int x,int y,Customer cust_info[],Rooms rooms[]){
+    ifstream ifile("Customer.txt");
+    for(int i=0;i<x;i++){
+        ifile>>cust_info[i].first_name;
+        ifile>>cust_info[i].last_name;
+        ifile>>cust_info[i].gender;
+        ifile>>cust_info[i].customer_id;
+        ifile>>cust_info[i].customer_address.email_address;
+        ifile>>cust_info[i].customer_address.phone_number;
+    }
+    ifile.close();
+
+    ifstream myfile("Rooms.txt",ios::in);
+
+    for(int i=0;i<y;i++){
+        myfile>>rooms[i].roomType;
+        myfile>>rooms[i].room_no;
+        myfile>>rooms[i].NO_beds;
+        myfile>>rooms[i].price;
+        myfile>>rooms[i].status;
+    }
+    myfile.close();
+
+    ifstream login("Accounts.txt");
+    login>>userName>>pin;
+
+    login.close();
+}
+
+void writeCustFile(int x,Customer cust_info[],Rooms rooms[]){
+
+    ofstream ofile("Customer.txt",ios::app);
+        ofile<<left<<setw(15)<<cust_info[x-1].first_name<<setw(15)<<cust_info[x-1].last_name<<setw(15)<<cust_info[x-1].gender<<setw(15)<<cust_info[x-1].customer_id<<setw(15)<<cust_info[x-1].customer_address.email_address<<setw(15)<<cust_info[x-1].customer_address.phone_number<<endl;
+}
+void writeRoomFile(int x,Customer cust_info[],Rooms rooms[]){
+    ofstream myfile("Rooms.txt",ios::app);
+        myfile<<left<<setw(15)<<rooms[x-1].roomType<<setw(15)<<rooms[x-1].room_no<<setw(15)<<rooms[x-1].NO_beds<<setw(15)<<rooms[x-1].price<<setw(15)<<rooms[x-1].status<<endl;
+
+}
+
+void changeAccount(){
+    int tempPIN;
+    system("cls");
+    cout<<"\n\n\t\t\tEnter old password: ";
+    tempPIN=INT_validation();
+
+    if(tempPIN==pin){
+        cout<<"\n\n\t\t\tEnter new User Name: ";
+        cin.ignore();
+        getline(cin,userName);
+        cout<<"\n\n\t\t\tEnter new Password: ";
+        pin=INT_validation();
+
+        ofstream login("Accounts.txt");
+        login<<userName<<"  "<<pin;
+    }
+    else{
+        cout<<"\n\n\t\t\tSorry you entered wrong Password!";
+    }
+
+}
 
 bool adminVerification(){
     system("cls");
-    string UName="admin";
     string temp;
     int check;
-    int pin=1234;
     cout<<"\n\n\n\t\t    ************************************";
     cout<<"\n\n\t\t\tEnter User Name: ";
     cin.ignore();
     getline(cin,temp);
     cout<<"\n\n\t\t\tEnter PIN CODE: ";
     check=INT_validation();
-    if(temp==UName&&check==pin){
+    if(temp==userName&&check==pin){
         cout<<"\n\n\t\t\t\tACCESS GRANTED.........";
         system("pause");
         return 1;
@@ -127,7 +187,6 @@ bool adminVerification(){
 }
 
 //Function for changing the size of an array
-
 void arrSize_update(int *size_room,int *size_cust){
     int choice;
     system("cls");
@@ -200,8 +259,8 @@ void Booking(Rooms rooms[],Customer cust_info[],int *x,int *y){
 
     system("cls");
 
-    cout<<"\n\n\n\t\t\t-------------------------------------";
-    if(rooms[choice-1].status == 1){
+    cout<<"\n\n\n\t\t\t----------------*****************---------------------";
+    if(cust_info[choice-1].customer_id==0){
         cout<<"\n\n\t\t\t\tFirst Name: ";
         cin.ignore();
         getline(cin,cust_info[choice-1].first_name);
@@ -215,16 +274,17 @@ void Booking(Rooms rooms[],Customer cust_info[],int *x,int *y){
         cout<<"\n\n\t\t\t\tPhone Number: ";
         cin>>cust_info[choice-1].customer_address.phone_number;
         rooms[choice-1].status = 0;
-        cust_info[choice-1].customer_id=counter+1;
-        counter++;
+        cust_info[choice-1].customer_id=1000+choice;
+
         rooms[choice-1].status=0;
         Sleep(200);
-        system("cls");
-        cout<<"\n\n\n\t\t\t\tUnique Custumer ID: "<<cust_info[choice-1].customer_id;
+        cout<<"\n\t\t\t\tUnique Custumer ID: "<<cust_info[choice-1].customer_id;
         cout<<"\n\n\t\t\t\tDONE! YOUR ARE BOOKED. YOUR ROOM IS "<<choice;
         cout<<"\n\t\t\t\t";system("PAUSE");
+        writeCustFile(choice,cust_info,rooms);
+        writeRoomFile(choice,cust_info,rooms);
     }
-    else if(rooms[choice-1].status == 0){
+    else if(cust_info[choice-1].customer_id >= 1000){
         cout<<"\n\n\t\t\t\tThe room is Reserved!!\n";
         cout<<"\n\t\t\t\t  ";system("PAUSE");
         User(rooms,cust_info,x,y);
@@ -239,22 +299,24 @@ void Booking(Rooms rooms[],Customer cust_info[],int *x,int *y){
 
 void DisplayCustomer(Rooms rooms[],Customer cust_info[],int *x){
     system("cls");
-    cout.width(15);cout<<"\n\n\t======================================================================\n";
-    cout.width(15);cout<<"\nName";
-    cout.width(15);cout<<"Gender";
-    cout.width(15);cout<<"Email";
-    cout.width(15);cout<<"Phone Number";
-    cout.width(15);cout<<"Customer Id";
-    cout.width(15);cout<<"Room NO"<<endl;
+    cout<<"\n\n\t\t\t======================================================================\n";
+    cout<<left<<"\n\t\tFirst Name"<<setw(15);
+    cout<<left<<"Last Name"<<setw(15);
+    cout<<"Gender"<<setw(15);
+    cout<<"Email"<<setw(15);
+    cout<<"Phone Number"<<setw(15);
+    cout<<"Customer Id"<<setw(15);
+    cout<<"Room NO"<<endl;
 
     for(int i=0;i<*x;i++){
-        if(rooms[i].status==false){
-        cout.width(15);cout<<cust_info[i].first_name+" "+cust_info[i].last_name;
-        cout.width(15);cout<<cust_info[i].gender;
-        cout.width(15);cout<<cust_info[i].customer_address.email_address;
-        cout.width(15);cout<<cust_info[i].customer_address.phone_number;
-        cout.width(15);cout<<cust_info[i].customer_id;
-        cout.width(15);cout<<rooms[i].room_no;
+        if(!rooms[i].status==0){
+        cout<<left<<"\t\t"<<cust_info[i].first_name<<setw(15);
+        cout<<cust_info[i].last_name<<setw(15);
+        cout.width(15);cout<<cust_info[i].gender<<setw(15);
+        cout.width(15);cout<<cust_info[i].customer_address.email_address<<setw(15);
+        cout.width(15);cout<<cust_info[i].customer_address.phone_number<<setw(15);
+        cout.width(15);cout<<cust_info[i].customer_id<<setw(15);
+        cout.width(15);cout<<rooms[i].room_no<<endl;
         }
         else
         continue;
@@ -272,24 +334,32 @@ void statRecord(Rooms rooms[],Customer cust_info[],int *x,int *y){
                 count++;
         }
     }
-
     occPercent=(count/(*x+(2*(*y))))*100;
     vacancy=(((*x+(2*(*y)))-count)/(*x+(2*(*y))))*100;
-    cout<<"/n/n/n/t/t/t===========================Statistcal Records======================";
-    cout<<"/n/n/t/t/tCurrently Our Hotel has an Occupation Percentage of: "<<occPercent;
-    cout<<"/n/nCurrently Our Hotel has a Vacancy Percentage of: "<<vacancy;
+    cout<<"\n\n\n\t\t\t===========================Statistcal Records======================";
+    cout<<"\n\n\t\t\tCurrently Our Hotel has an Occupation Percentage of: "<<occPercent;
+    cout<<"\n\n\t\t\tCurrently Our Hotel has a Vacancy Percentage of: "<<vacancy;
     system("pause");
 }
 
 void AvailableRooms(Rooms rooms[],int *x,int *y){
     system("cls");
+
+    ifstream ifile("Rooms.txt",ios::in);
+        for(int i=0;i<(*x+*y);i++){
+            ifile>>rooms[i].roomType;
+            ifile>>rooms[i].room_no;
+            ifile>>rooms[i].NO_beds;
+            ifile>>rooms[i].price;
+            ifile>>rooms[i].status;
+        }
    cout<<"-------------------------------------------------"<<endl;
     cout<<left<<setw(7)<<"room no"<<"|| "<<left<<setw(9)<<"room type"<<"|| "<<left<<setw(9)<<"no of bed"<<"|| "<<left<<setw(5)<<"price"<<"|| "<<left<<setw(6)<<"status"<<"||"<<endl;
     cout<<"-------------------------------------------------"<<endl;
     for(int i=0; i<*x+*y; i++){
-      if(i>=0 && i<10){
+      if(rooms[i].roomType=="Ordinary Room"&&rooms[i].NO_beds==1){
     cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"ordinary"<<"|| "<<left<<setw(9)<<1<<"|| "<<left<<setw(5)<<"200$"<<"|| ";
-    if(rooms[i].status==true){
+    if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -299,9 +369,9 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
   cout<<"-------------------------------------------------"<<endl;
       continue;
       }
-      if(i>=10 && i<20){
-    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"luxuary"<<"|| "<<left<<setw(9)<<1<<"|| "<<left<<setw(5)<<"400$"<<"||";
-     if(rooms[i].status==true){
+      if(rooms[i].roomType=="Luxuary Room"&&rooms[i].NO_beds==1){
+    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"Luxuary"<<"|| "<<left<<setw(9)<<1<<"|| "<<left<<setw(5)<<"400$"<<"||";
+     if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -311,9 +381,9 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
   cout<<"-------------------------------------------------"<<endl;
    continue;
       }
-      if(i>=20 && i<25){
-    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"royal"<<"|| "<<left<<setw(9)<<1<<"|| "<<left<<setw(5)<<"800$"<<"||";
-     if(rooms[i].status==true){
+      if(rooms[i].roomType=="Royal Room"&&rooms[i].NO_beds==1){
+    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"Royal"<<"|| "<<left<<setw(9)<<1<<"|| "<<left<<setw(5)<<"800$"<<"||";
+     if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -323,9 +393,9 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
   cout<<"-------------------------------------------------"<<endl;
    continue;
       }
-      if(i>=25 && i<35){
-    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"ordinary"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"500$"<<"||";
-     if(rooms[i].status==true){
+      if(rooms[i].roomType=="Ordinary Room"&&rooms[i].NO_beds==2){
+    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"Ordinary"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"500$"<<"||";
+     if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -335,9 +405,9 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
   cout<<"-------------------------------------------"<<endl;
    continue;
       }
-      if(i>=35 && i<45){
-    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"luxuary"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"800$"<<"||";
-     if(rooms[i].status==true){
+      if(rooms[i].roomType=="Luxuary Room"&&rooms[i].NO_beds==2){
+    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"Luxuary"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"800$"<<"||";
+     if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -347,9 +417,9 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
   cout<<"-------------------------------------------------"<<endl;
    continue;
       }
-      if(i>=45 && i<50){
-    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"royal"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"1400$"<<"||";
-     if(rooms[i].status==true){
+      if(rooms[i].roomType=="Royal Room"&&rooms[i].NO_beds==2){
+    cout<<left<<setw(7)<<i+1<<"|| "<<left<<setw(9)<<"Royal"<<"|| "<<left<<setw(9)<<2<<"|| "<<left<<setw(5)<<"1400$"<<"||";
+     if(rooms[i].status){
 
       cout<<left<<setw(6)<<"A"<<endl;
     }
@@ -367,7 +437,7 @@ void AvailableRooms(Rooms rooms[],int *x,int *y){
 }
 
 
-void setService(Rooms rooms[],int *x){
+void setService(Customer cust_info[],Rooms rooms[],int *x,int y){
     system("cls");
 int change;
 int *choose=&change;
@@ -391,39 +461,124 @@ cout<<"\t\t\t3. to change price of royal rooms with one bed"<<endl;
 cout<<"\t\t\t4. to change price of royal rooms with two beds"<<endl;
 cout<<"\t\t\t5. to change price of ordinary rooms with one bed"<<endl;
 cout<<"\t\t\t6. to change price of ordinary rooms with two beds"<<endl;
+
 *choose=INT_validation();
+
 switch(*choose){
     system("cls");
-    case 1:
-        cout<<"\n\t\t\tset the new price"<<endl;
-        price1L=FLOAT_validation();
+    case 1:{
+        cout<<"\n\t\t\tSet the new price: ";
+        //price1L=FLOAT_validation();
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<50;i++){
+            if(rooms[i].roomType=="Luxury Room" && rooms[i].NO_beds==1){
+                rooms[i].price=FLOAT_validation();
+            }
+        }
+        for(int i=0;i<*x;i++){
+            myFile<<left<<setw(15)<<rooms[i].roomType<<setw(15);
+            myFile<<rooms[i].room_no<<setw(15);
+            myFile<<rooms[i].NO_beds<<setw(15);
+            myFile<<rooms[i].price<<setw(15);
+            myFile<<rooms[i].status<<endl;
+        }
+
         cout<<"\n\t\t\tDONE"<<endl;
-        break;
-    case 2:
-        cout<<"\n\t\t\tset the new price"<<endl;
-        price2L=FLOAT_validation();
+        break;}
+    case 2:{
+        cout<<"\n\t\t\tSet the new price: ";
+        //price2L=FLOAT_validation();
+        for(int i=0;i<50;i++){
+            if(rooms[i].roomType=="Luxury Room" && rooms[i].NO_beds==2){
+                rooms[i].price=FLOAT_validation();
+            }
+        }
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<*x;i++){
+            myFile<<rooms[i].roomType;
+            myFile<<rooms[i].room_no;
+            myFile<<rooms[i].NO_beds;
+            myFile<<rooms[i].price;
+            myFile<<rooms[i].status;
+        }
         cout<<"\n\t\t\tDONE"<<endl;
-        break;
-    case 3:
-       cout<<"\n\t\t\tset the new price"<<endl;
-        price1R=FLOAT_validation();
+        break;}
+    case 3:{
+       cout<<"\n\t\t\tSet the new price: ";
+        //price1R=FLOAT_validation();
+        for(int i=0;i<50;i++){
+        if(rooms[i].roomType=="Royal Room" && rooms[i].NO_beds==1){
+            rooms[i].price=FLOAT_validation();
+        }
+    }
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<*x;i++){
+            myFile<<rooms[i].roomType;
+            myFile<<rooms[i].room_no;
+            myFile<<rooms[i].NO_beds;
+            myFile<<rooms[i].price;
+            myFile<<rooms[i].status;
+        }
+
         cout<<"\n\t\t\tDONE"<<endl;
-        break;
-    case 4:
-        cout<<"\n\t\t\tset the new price"<<endl;
-        price2R=FLOAT_validation();
+        break;}
+    case 4:{
+        cout<<"\n\t\t\tSet the new price: ";
+        //price2R=FLOAT_validation();
+        for(int i=0;i<50;i++){
+            if(rooms[i].roomType=="Royal Room" && rooms[i].NO_beds==2){
+                rooms[i].price=FLOAT_validation();
+            }
+        }
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<*x;i++){
+            myFile<<rooms[i].roomType;
+            myFile<<rooms[i].room_no;
+            myFile<<rooms[i].NO_beds;
+            myFile<<rooms[i].price;
+            myFile<<rooms[i].status;
+        }
+
+        cout<<"\n\t\t\tDONE"<<endl;
+        break;}
+    case 5:{
+        cout<<"\n\t\t\tset the new price";
+        //price1O=FLOAT_validation();
+        for(int i=0;i<50;i++){
+            if(rooms[i].roomType=="Ordinary Room" && rooms[i].NO_beds==1){
+                rooms[i].price=FLOAT_validation();
+            }
+        }
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<*x;i++){
+            myFile<<rooms[i].roomType;
+            myFile<<rooms[i].room_no;
+            myFile<<rooms[i].NO_beds;
+            myFile<<rooms[i].price;
+            myFile<<rooms[i].status;
+        }
+
         cout<<"\t\t\tDONE"<<endl;
-        break;
-    case 5:
-        cout<<"\n\t\t\tset the new price"<<endl;
-        price1O=FLOAT_validation();
+        break;}
+    case 6:{
+        cout<<"\n\t\t\tset the new price";
+        //price2O=FLOAT_validation();
+        for(int i=0;i<50;i++){
+            if(rooms[i].roomType=="Ordinary Room" && rooms[i].NO_beds==2){
+                rooms[i].price=FLOAT_validation();
+            }
+        }
+        ofstream myFile("Rooms.txt");
+        for(int i=0;i<*x;i++){
+            myFile<<rooms[i].roomType;
+            myFile<<rooms[i].room_no;
+            myFile<<rooms[i].NO_beds;
+            myFile<<rooms[i].price;
+            myFile<<rooms[i].status;
+        }
+
         cout<<"\t\t\tDONE"<<endl;
-        break;
-    case 6:
-        cout<<"\n\t\t\tset the new price"<<endl;
-        price2O=FLOAT_validation();
-        cout<<"\t\t\tDONE"<<endl;
-        break;
+        break;}
     default:
     cout<<"\n\t\t\tOUT OF BOUND INPUT";
     }
@@ -434,6 +589,7 @@ else if(change==2){
 else{
      cout<<"\n\n\t\t\twrong number"<<endl;
 }
+system("pause");
 }
 
 void defaultSetters(Rooms rooms[],int *x,int *y){
@@ -507,6 +663,18 @@ void cancelation(Rooms rooms[],Customer cust_info[],int *x,int *y){
 
     system("cls");
     int a=0;
+
+    ifstream cancelFile("Customer.txt");
+    for(int i=0;i<(*x+2*(*y));i++){
+        cancelFile>>cust_info[i].first_name;
+        cancelFile>>cust_info[i].last_name;
+        cancelFile>>cust_info[i].gender;
+        cancelFile>>cust_info[i].customer_id;
+        cancelFile>>cust_info[i].customer_address.email_address;
+        cancelFile>>cust_info[i].customer_address.phone_number;
+    }
+    cancelFile.close();
+
     int check;
     cout<<"\n\n\t\t\tEnter Customer Id Of the customer you want to delete: ";
     check=INT_validation();
@@ -518,19 +686,28 @@ void cancelation(Rooms rooms[],Customer cust_info[],int *x,int *y){
                 cust_info[j].last_name=cust_info[j+1].last_name;
                 strcpy(cust_info[j].gender,cust_info[j+1].gender);
                 cust_info[j].customer_id=cust_info[j+1].customer_id;
-                cust_info[j].customer_address.city=cust_info[j+1].customer_address.city;
-                cust_info[j].customer_address.country=cust_info[j+1].customer_address.country;
                 cust_info[j].customer_address.email_address=cust_info[j+1].customer_address.email_address;
                 cust_info[j].customer_address.phone_number=cust_info[j+1].customer_address.phone_number;
-                cust_info[j].customer_address.street=cust_info[j+1].customer_address.street;
-                cust_info[j].customer_address.zipCode=cust_info[j+1].customer_address.zipCode;
                 a++;
             }
+
+            ofstream Cfile("Customer.txt",ios::app);
+                for(int i=0;i<(*x+2*(*y));i++){
+                    Cfile<<setw(15)<<cust_info[i].first_name<<setw(15);
+                    Cfile<<cust_info[i].last_name<<setw(15);
+                    Cfile<<cust_info[i].gender<<setw(15);
+                    Cfile<<cust_info[i].customer_id<<setw(15);
+                    Cfile<<cust_info[i].customer_address.email_address<<setw(15);
+                    Cfile<<cust_info[i].customer_address.phone_number;
+                }
+                Cfile.close();
         }
         else
-        a++;
+            a++;
 
     }
+
+
     if(a==1){
     cout<<"\n\n\n\t\t\t=====================================";
     cout<<"\n\t\t\t\t||ORDER CANCELLED!||";
@@ -553,14 +730,15 @@ void Admin(Rooms rooms[],Customer cust_info[],int *size_room,int *size_cust){
     cout<<"\n\t\t\t\t\t1.Set Service Package Cost."<<endl;
     cout<<"\n\t\t\t\t\t2.Display All Customers."<<endl;
     cout<<"\n\t\t\t\t\t3.Update The Number Of Customers Or Rooms."<<endl;
-    cout<<"\n\t\t\t\t\t4.Back To Main Menu"<<endl;
-    cout<<"\n\t\t\t\t\t5.Exit"<<endl;
+    cout<<"\n\t\t\t\t\t4.Change User Name Or Password"<<endl;
+    cout<<"\n\t\t\t\t\t5.Back To Main Menu"<<endl;
+    cout<<"\n\t\t\t\t\t6.Exit"<<endl;
     cout<<"\n\t\t\t\t\t   Enter your choice: ";
     choice=INT_validation();
 
     switch(choice){
     case 1:
-        setService(rooms,size_room);
+        setService(cust_info,rooms,size_room,*size_cust);
         break;
     case 2:
         DisplayCustomer(rooms,cust_info,size_cust);
@@ -569,9 +747,12 @@ void Admin(Rooms rooms[],Customer cust_info[],int *size_room,int *size_cust){
         arrSize_update(size_room,size_cust);
         break;
     case 4:
-        main();
+        changeAccount();
         break;
     case 5:
+        main();
+        break;
+    case 6:
         exit(1);
     }
     }
@@ -628,7 +809,10 @@ void User(Rooms rooms[],Customer cust_info[],int *x,int *y){
         exit(1);
     }
 }
+
+
 int main(){
+    counter++;
     int *num_singleRoom=new int(25);
     int *num_TwinRoom=new int(25);
     int *size_room=new int(*num_singleRoom+*num_TwinRoom);
@@ -640,8 +824,13 @@ int main(){
     Rooms *rooms=new Rooms[*size_room];
 
     /*****************************************/
-
+    if(counter==1){
     defaultSetters(rooms,num_singleRoom,num_TwinRoom);
+    }
+    readFile(size_cust,*size_room,cust_info,rooms);
+    /*****************************************/
+
+    
     while(true){
     system("cls");
     cout<<"\n\n\n\n\n\n\t\t\t\t.........WELCOME........\n";
@@ -650,6 +839,7 @@ int main(){
     cout<<"\n\t\t\t\t  2.USER\n";
     cout<<"\n\t\t\t\t  3.EXIT\n"<<"\n\t\t\t\t   Enter your choice: ";
     int choice;
+
 
     choice=INT_validation();
 
